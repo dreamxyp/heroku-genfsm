@@ -15,7 +15,6 @@
 -export([init/1]).
 
 
-
 %% @spec start_link() -> ServerRet
 %% @doc API for starting the supervisor.
 start_link() ->
@@ -27,11 +26,12 @@ upgrade() ->
     {ok, {_, Specs}} = init([]),
 
     Old = sets:from_list(
-            [Name || {Name, _, _, _} <- supervisor:which_children(?MODULE)]),
+        [Name || {Name, _, _, _} <- supervisor:which_children(?MODULE)]),
     New = sets:from_list([Name || {Name, _, _, _, _, _} <- Specs]),
     Kill = sets:subtract(Old, New),
 
-    sets:fold(fun (Id, ok) ->
+    sets:fold(fun
+                  (Id, ok) ->
                       supervisor:terminate_child(?MODULE, Id),
                       supervisor:delete_child(?MODULE, Id),
                       ok
@@ -43,14 +43,20 @@ upgrade() ->
 %% @spec init([]) -> SupervisorTree
 %% @doc supervisor callback.
 init([]) ->
-    Ip = 
-		case os:getenv("WEBMACHINE_IP") of 
-			false -> "0.0.0.0"; 
-			Any -> Any 
-		end,
-    {ok, App} = application:get_application(?MODULE),
+    Ip =
+        case os:getenv("WEBMACHINE_IP") of
+            false -> "0.0.0.0";
+            Any -> Any
+        end,
+    {ok, App} =
+        case application:get_application(?MODULE) of
+            {ok, App0} -> {ok, App0};
+            _ -> {ok, genfsm}
+        end,
+    %io:format("App1: ~p~n", [App]),
+    %io:format("App2: ~p~n", [priv_dir(App)]),
     {ok, Dispatch} = file:consult(filename:join([priv_dir(App), "dispatch.conf"])),
-	Port = 
+    Port =
         case os:getenv("PORT") of
             false ->
                 case os:getenv("WEBMACHINE_PORT") of
@@ -60,24 +66,22 @@ init([]) ->
             AnyPort -> list_to_integer(AnyPort)
         end,
     WebConfig = [
-                 {ip, Ip},
-                 {port, Port},
-                 %{log_dir, "priv/log"},
-                 {dispatch, Dispatch}],
-	Egeoip = {egeoip, {egeoip, start_link, [egeoip]},
-                permanent, 5000, worker, [egeoip]},
-	
+        {ip, Ip},
+        {port, Port},
+        %{log_dir, "priv/log"},
+        {dispatch, Dispatch}],
+    Egeoip = {egeoip, {egeoip, start_link, [egeoip]}, permanent, 5000, worker, [egeoip]},
     Web = {webmachine_mochiweb,
-           {webmachine_mochiweb, start, [WebConfig]},
-           permanent, 5000, worker, [mochiweb_socket_server]},
+        {webmachine_mochiweb, start, [WebConfig]},
+        permanent, 5000, worker, [mochiweb_socket_server]},
 
     GenfsmServer = {genfsm_server,
-           {genfsm_server, start_link, []},
-           permanent, 5000, worker, [genfsm_server]},
-	
+        {genfsm_server, start_link, []},
+        permanent, 5000, worker, [genfsm_server]},
+
     Processes = [Egeoip, Web, GenfsmServer],
 
-    {ok, { {one_for_one, 10, 10}, Processes} }.
+    {ok, {{one_for_one, 10, 10}, Processes}}.
 
 %%
 %% @doc return the priv dir

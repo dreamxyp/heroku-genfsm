@@ -18,6 +18,7 @@ compile:
 	@mkdir -p $(Curr_Ebin)
 	@$(Erl) -pa $(Curr_Ebin) -pa $(Root_Ebin)/*/ -pa $(Root)/deps/*/ -noshell -make -j 10
 	@cp -r $(Curr_Root)/src/$(App_Name).app.src $(Curr_Ebin)/$(App_Name).app
+	@cp -r $(Curr_Root)/priv $(Root_Ebin)/
 	@echo ">>\033[32m 编译$(App_Name) 完成 \033[0m "
 	@# $(REBAR) compile $(REBAR_FLAGS)
 

@@ -243,6 +243,7 @@ new(country) ->
 new(city) ->
     new(default_db(["GeoIPCity.dat", "GeoLiteCity.dat"]));
 new(Path) ->
+    io:format("Loading GeoIP database from ~p~n", [Path]),
     case filelib:is_file(Path) of
         true ->
             Data = load_file(Path),
@@ -263,6 +264,7 @@ default_db([]) ->
     not_found;
 default_db([Path | Rest]) ->
     FullPath = priv_path([Path]),
+    io:format("Checking for GeoIP database at ~p~n", [FullPath]),
     case lists:filter(fun filelib:is_file/1, [FullPath ++ ".gz", FullPath]) of
         [] ->
             default_db(Rest);
