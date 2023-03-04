@@ -37,9 +37,8 @@ handle_request(Resource, ReqState) ->
     put(reqstate, ReqState),
     try
         d(v3b13)
-    catch
-        ?STPATTERN(error:_Reason) ->
-            error_response(?STACKTRACE)
+    catch _C:_Reason:ST ->
+            error_response(ST)
     end.
 
 wrcall(X) ->

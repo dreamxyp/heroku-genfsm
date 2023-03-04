@@ -2,15 +2,13 @@
     [
         'src/*'
         , 'src/*/*'
-        , 'src/*/*/*'
-        , 'src/*/*/*/*'
     ],
     [
         {hipe, [o3]}
         %%,encrypt_debug_info
-        , debug_info
+        %%, debug_info
         , {i, "include"}
-        , {outdir, "./ebin/genfsm"}
+        , {outdir, "./../../ebin/webmachine"}
 %%        , {parse_transform, lager_transform}
         , {d, enable_auth}
         , {d, enable_gm}
@@ -22,16 +20,14 @@
 %%    [
 %%        'test/*'
 %%        , 'test/*/*'
-%%        , 'src/*/*/*'
-%%        , 'src/*/*/*/*'
 %%    ],
 %%    [
 %%        {hipe, [o3]}
-%%        %%,encrypt_debug_info
+%%        %% , encrypt_debug_info
 %%        , debug_info
 %%        , {i, "include"}
-%%        , {outdir, "./../quant_release/test/ebin"}
-%%%%        , {parse_transform, lager_transform}
+%%        , {outdir, "./../../quant_release/test/deps/core"}
+%%        %% , {parse_transform, lager_transform}
 %%        , {d, enable_auth}
 %%        , {d, enable_gm}
 %%        , {d, enable_debug}

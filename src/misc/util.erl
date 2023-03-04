@@ -3,7 +3,9 @@
 %%% @Description: Common Function
 %%%-----------------------------------
 -module(util).
--compile(export_all).
+%%-compile(export_all).
+
+-export([unixtime/0, longunixtime/0, string_to_term/1, term_to_string/1, seconds_to_localtime/1, to_atom/1, is_string/1, shuffle_list/1]).
 
 -define(DIFF_SECONDS_0000_1900, 62167219200).
 
@@ -11,12 +13,12 @@
 
 %% @doc 取得当前的unix时间戳（秒） 
 unixtime() ->
-    {MegaSecs, Secs, _MicroSecs} = erlang:now(),
+    {MegaSecs, Secs, _MicroSecs} = erlang:timestamp(),
     MegaSecs * 1000000 + Secs.
 
 %% 取得当前的unix时间戳（豪秒）
 longunixtime() ->
-    {MegaSecs, Secs, _MicroSecs} = erlang:now(),
+    {MegaSecs, Secs, _MicroSecs} = erlang:timestamp(),
     (MegaSecs * 1000000000000 + Secs * 1000000 + _MicroSecs) div 1000.
 
 %% @doc term反序列化，string转换为term，e.g., "[{a},1]"  => [{a},1] 
@@ -72,6 +74,6 @@ is_string(_, _) -> no.
 shuffle_list(List) -> shuffle_list(List, []).
 shuffle_list([], Acc) -> Acc;
 shuffle_list(List, Acc) ->
-	{Leading, [H | T]} = lists:split(random:uniform(length(List)) - 1, List),
+	{Leading, [H | T]} = lists:split(rand:uniform(length(List)) - 1, List),
 	shuffle_list(Leading ++ T, [H | Acc]).
 

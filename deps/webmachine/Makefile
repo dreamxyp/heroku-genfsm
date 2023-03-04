@@ -1,28 +1,49 @@
-REBAR3_URL=https://s3.amazonaws.com/rebar3/rebar3
+REBAR ?= $(shell which rebar 2>/dev/null || which ./rebar)
+REBAR_FLAGS ?=
 
-# If there is a rebar in the current directory, use it
-ifeq ($(wildcard rebar3),rebar3)
-REBAR3 = $(CURDIR)/rebar3
-endif
+Erl ?= erl
+ErlC ?= erlc
 
-# Fallback to rebar on PATH
-REBAR3 ?= $(shell which rebar3)
+# app name
+App_Name = webmachine
 
-# And finally, prep to download rebar if all else fails
-ifeq ($(REBAR3),)
-REBAR3 = $(CURDIR)/rebar3
-endif
+Root=./../..
+Root_Ebin=$(Root)/ebin
+Curr_Ebin=$(Root_Ebin)/$(App_Name)
+Curr_Root=$(Root)/deps/$(App_Name)
 
+all: compile
 
-all: $(REBAR3)
-	@$(REBAR3) do update, clean, compile, eunit, dialyzer
+compile:
+	@mkdir -p $(Curr_Ebin)
+	@$(Erl) -pa $(Curr_Ebin) -pa $(Root_Ebin)/*/ -pa $(Root)/deps/*/ -noshell -make -j 10
+	@cp -r $(Curr_Root)/src/$(App_Name).app.src $(Curr_Ebin)/$(App_Name).app
+	@echo ">>\033[32m 编译$(App_Name) 完成 \033[0m "
+	@# $(REBAR) compile $(REBAR_FLAGS)
 
-$(REBAR3):
-	curl -Lo rebar3 $(REBAR3_URL) || wget $(REBAR3_URL)
-	chmod a+x rebar3
+doc:
+	@# $(REBAR) doc $(REBAR_FLAGS)
 
-distclean:
-	@rm -rf ./_build
+test: compile
+	@# $(REBAR) eunit $(REBAR_FLAGS)
 
-edoc:
-	@$(REBAR3) edoc
+clean:
+	@rm -rf $(Curr_Ebin)/*.beam
+	@rm -rf $(Curr_Ebin)/*.app
+	@rm -rf $(Curr_Ebin)/erl_crash.dump
+	@rm -rf erl_crash.dump
+	@echo ">>\033[91m 清理$(App_Name) 完成 \033[0m "
+	@# $(REBAR) clean $(REBAR_FLAGS)
+
+clean_plt:
+	@# @rm -f _test/dialyzer_plt
+
+build_plt: build-plt
+
+build-plt:
+	@# @ [ -d _test ] || mkdir _test
+	@# $(REBAR) build-plt $(REBAR_FLAGS)
+
+dialyzer:
+	@# $(REBAR) dialyze $(REBAR_FLAGS)
+

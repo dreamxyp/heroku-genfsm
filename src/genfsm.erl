@@ -8,6 +8,7 @@
 -export([start/0, start_link/0, stop/0]).
 
 ensure_started(App) ->
+    io:format("ensure_started: ~p~n", [App]),
     case application:start(App) of
         ok ->
             ok;
@@ -42,10 +43,11 @@ start() ->
     application:start(compiler),
     application:start(syntax_tools),
     ensure_started(mochiweb),
-    application:set_env(webmachine, webmachine_logger_module, 
+    application:set_env(webmachine, webmachine_logger_module,
                         webmachine_logger),
     ensure_started(webmachine),
-    application:start(genfsm).
+    application:start(genfsm),
+    ok.
 
 %% @spec stop() -> ok
 %% @doc Stop the genfsm server.
