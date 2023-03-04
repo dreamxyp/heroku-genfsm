@@ -21,6 +21,7 @@ ensure_started(App) ->
 start_link() ->
     ensure_started(inets),
     ensure_started(crypto),
+    application:start(asn1),
     application:start(public_key),
     application:start(ssl),
     application:start(xmerl),
@@ -30,13 +31,15 @@ start_link() ->
     application:set_env(webmachine, webmachine_logger_module, 
                         webmachine_logger),
     ensure_started(webmachine),
-    genfsm_sup:start_link().
+    genfsm_sup:start_link(),
+    ok.
 
 %% @spec start() -> ok
 %% @doc Start the genfsm server.
 start() ->
     ensure_started(inets),
     ensure_started(crypto),
+    application:start(asn1),
     application:start(public_key),
     application:start(ssl),
     application:start(xmerl),
