@@ -531,9 +531,9 @@ bench(Count) ->
                  "61.16.226.206",
                  "64.180.1.78",
                  "138.217.4.11"],
-    StartParse = now(),
+    StartParse = erlang:timestamp(),
     benchcall(fun () -> [lookup(X) || X <- SampleIPs] end, Count),
-    EndParse = now(),
+    EndParse = erlang:timestamp(),
     {parse_100k_addr, pytime(EndParse) - pytime(StartParse)}.
 
 ensure_binary_list(L) when is_list(L) ->
