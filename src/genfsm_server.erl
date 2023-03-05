@@ -60,9 +60,9 @@ code_change(_OldVsn, State, _Extra) ->
 %% @doc 服务检测
 detect_server() ->
     {ok, {{_Version, 200, _ReasonPhrase}, _Headers, _Body}} = 
-        httpc:request("http://genfsm.herokuapp.com/").
+        httpc:request("https://sh.erl.pm/").
 detect_genevent() ->
-	httpc:request("http://genevent.herokuapp.com/").
+	httpc:request("https://sh.erl.pm/").
 detect_luweb() ->
 	httpc:request("http://luweb.herokuapp.com/").
 

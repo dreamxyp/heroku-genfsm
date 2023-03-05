@@ -17,3 +17,7 @@ To create a new mochiweb using project:
 
 To create a new mochiweb using project in a specific directory:
    make app PROJECT=project_name PREFIX=$HOME/projects/
+
+
+启动：
+   `make && bash ./start.sh`  
