@@ -175,32 +175,35 @@ new_request(Socket, Opts, Request, RevHeaders) ->
     ok = mochiweb_socket:exit_if_closed(mochiweb_socket:setopts(Socket, [{packet, raw}])),
     mochiweb:new_request({Socket, Opts, Request, lists:reverse(RevHeaders)}).
 
-after_response(Body, Req) ->
-    Socket = Req:get(socket),
-    case Req:should_close() of
-        true ->
-            mochiweb_socket:close(Socket),
-            exit(normal);
-        false ->
-            Req:cleanup(),
-            erlang:garbage_collect(),
-            ?MODULE:loop(Socket, mochiweb_request:get(opts, Req), Body)
-    end.
+after_response(_Body, {_Mod, _ReqParas} = _Req) ->
+    ok.
+%%    io:format("after_response Mod:~p Req:~p ReqParas:~p~n", [Mod, ReqParas, Body]),
+%%    Socket = Mod:get(socket),
+%%    case Mod:should_close() of
+%%        true ->
+%%            mochiweb_socket:close(Socket),
+%%            exit(normal);
+%%        false ->
+%%            Mod:cleanup(),
+%%            erlang:garbage_collect(),
+%%            ?MODULE:loop(Socket, mochiweb_request:get(opts, Req), Body)
+%%    end.
 
 parse_range_request(RawRange) when is_list(RawRange) ->
     try
             "bytes=" ++ RangeString = RawRange,
         RangeTokens = [string:strip(R) || R <- string:tokens(RangeString, ",")],
         Ranges = [R || R <- RangeTokens, string:len(R) > 0],
-        lists:map(fun("-" ++ V) ->
-            {none, list_to_integer(V)};
-            (R) ->
-                case string:tokens(R, "-") of
-                    [S1, S2] ->
-                        {list_to_integer(S1), list_to_integer(S2)};
-                    [S] ->
-                        {list_to_integer(S), none}
-                end
+        lists:map(fun
+                      ("-" ++ V) ->
+                          {none, list_to_integer(V)};
+                      (R) ->
+                          case string:tokens(R, "-") of
+                              [S1, S2] ->
+                                  {list_to_integer(S1), list_to_integer(S2)};
+                              [S] ->
+                                  {list_to_integer(S), none}
+                          end
                   end,
             Ranges)
     catch

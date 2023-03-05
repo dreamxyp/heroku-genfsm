@@ -105,7 +105,8 @@ to_html(ReqData, State) ->
 
     ],
 
-    {ok, Html} = genfsm_status_dtl:render(HtmlData),
+    Html = "status.html",
+%%    {ok, Html} = genfsm_status_dtl:render(HtmlData),
     {Html, ReqData, State}.
 
 
