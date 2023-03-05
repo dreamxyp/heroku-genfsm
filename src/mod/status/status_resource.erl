@@ -105,7 +105,7 @@ to_html(ReqData, State) ->
 
     ],
 
-    Html = "status.html",
+    Html = "404 Not Found",
 %%    {ok, Html} = genfsm_status_dtl:render(HtmlData),
     {Html, ReqData, State}.
 
