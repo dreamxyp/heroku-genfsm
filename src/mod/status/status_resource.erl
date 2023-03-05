@@ -11,7 +11,7 @@ init([]) -> {ok, undefined}.
 to_html(ReqData, State) ->
     Domain =
         case mochiweb_headers:get_value("Host", ReqData#wm_reqdata.req_headers) of
-            undefined -> "erl.pm";
+            undefined -> "sh.erl.pm";
             R -> R
         end,
     {ok, ApplicationName} =
